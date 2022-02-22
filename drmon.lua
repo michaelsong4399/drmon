@@ -112,7 +112,7 @@ function buttons()
     end
 
     --Match Output and Generation
-    if yPos == 8 and and ( xPos == 14 or xPos == 15) then
+    if yPos == 8 and ( xPos == 14 or xPos == 15) then
       if autoOutputGate == 1 then
         autoOutputGate = 0
       else
