@@ -112,7 +112,7 @@ function buttons()
     end
 
     --Match Output and Generation
-    if yPos == 8 and xPos == 14 then
+    if yPos == 8 and and ( xPos == 14 or xPos == 15) then
       if autoOutputGate == 1 then
         autoOutputGate = 0
       else
@@ -246,11 +246,12 @@ function update()
     f.draw_text_lr(mon, 2, 7, 1, "Output Gate", f.format_int(fluxgate.getSignalLowFlow()) .. " rf/t", colors.white, colors.blue, colors.black)
 
     -- buttons
-    drawButtons(8)
+    
     if autoOutputGate == 1 then
       f.draw_text(mon, 14, 8, "AU", colors.white, colors.gray)
     else
       f.draw_text(mon, 14, 10, "MA", colors.white, colors.gray)
+      drawButtons(8)
     end
 
     f.draw_text_lr(mon, 2, 9, 1, "Input Gate", f.format_int(inputfluxgate.getSignalLowFlow()) .. " rf/t", colors.white, colors.blue, colors.black)
