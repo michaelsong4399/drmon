@@ -343,8 +343,8 @@ function update()
       if autoOutputGate == 1 then 
         fluxval = ri.generationRate
         fluxgate.setSignalLowFlow(fluxval)
-      else
-        fluxgate.setSignalLowFlow(curOutputGate)
+      -- else
+      --   fluxgate.setSignalLowFlow(fluxgate.getSignalLowFlow())
       end
     end
 
