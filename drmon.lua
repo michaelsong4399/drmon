@@ -15,6 +15,7 @@ os.loadAPI("lib/f")
 local version = "0.25"
 -- toggleable via the monitor, use our algorithm to achieve our target field strength or let the user tweak it
 local autoInputGate = 1
+local autoOutputGate = 0
 local curInputGate = 222000
 
 -- monitor 
@@ -66,6 +67,7 @@ function save_config()
   sw.writeLine(version)
   sw.writeLine(autoInputGate)
   sw.writeLine(curInputGate)
+  sw.writeLine(autoOutputGate)
   sw.close()
 end
 
@@ -75,6 +77,7 @@ function load_config()
   version = sr.readLine()
   autoInputGate = tonumber(sr.readLine())
   curInputGate = tonumber(sr.readLine())
+  autoOutputGate = tonumber(sr.readLine())
   sr.close()
 end
 
@@ -92,8 +95,8 @@ function buttons()
     -- button handler
     event, side, xPos, yPos = os.pullEvent("monitor_touch")
 
-    -- User star/stop button
-    if yPos == 2 and xPos >= mon.X-1-string.len(ri.status) and xPos<=mon.X-2then
+    -- User start/stop button
+    if yPos == 2 and xPos >= mon.X-1-string.len(ri.status) and xPos<=mon.X-2 then
       if userStop == -1 then
         reactor.chargeReactor()
         userStop = 0
@@ -110,7 +113,12 @@ function buttons()
 
     --Match Output and Generation
     if yPos == 8 and xPos == 14 then
-      fluxgate.setSignalLowFlow(ri.generationRate)
+      if autoOutputGate == 1 then
+        autoOutputGate = 0
+      else
+        autoOutputGate = 1
+      end
+      save_config()
     end
 
     -- output gate controls
@@ -239,7 +247,11 @@ function update()
 
     -- buttons
     drawButtons(8)
-    f.draw_text(mon, 14, 8, "G", colors.white, colors.gray)
+    if autoOutputGate == 1 then
+      f.draw_text(mon, 14, 8, "AU", colors.white, colors.gray)
+    else
+      f.draw_text(mon, 14, 10, "MA", colors.white, colors.gray)
+    end
 
     f.draw_text_lr(mon, 2, 9, 1, "Input Gate", f.format_int(inputfluxgate.getSignalLowFlow()) .. " rf/t", colors.white, colors.blue, colors.black)
 
@@ -326,6 +338,13 @@ function update()
         inputfluxgate.setSignalLowFlow(fluxval)
       else
         inputfluxgate.setSignalLowFlow(curInputGate)
+      end
+      
+      if autoOutputGate == 1 then 
+        fluxval = ri.generationRate
+        fluxgate.setSignalLowFlow(fluxval)
+      else
+        fluxgate.setSignalLowFlow(curOutputGate)
       end
     end
 
